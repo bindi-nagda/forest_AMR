@@ -1,0 +1,307 @@
+\documentclass[11pt,a4paper]{article}
+\renewcommand{\baselinestretch}{1}
+\usepackage[utf8]{inputenc}
+\usepackage{amsmath}
+\usepackage{comment}
+\usepackage{amsfonts}
+\usepackage{latexsym,amssymb}
+\usepackage{authblk}
+\usepackage{graphicx}
+\usepackage{hyperref}
+\usepackage{amsthm}
+\usepackage[margin=0.80in]{geometry}
+\usepackage{xparse,mathtools}
+\usepackage{lscape}
+\newcommand*\conj[1]{\bar{#1}}
+\newcommand*\mean[1]{\bar{#1}}
+\makeatletter
+\def\@seccntformat#1{\expandafter\ifx\csname c@#1\endcsname\c@section\else
+  \csname the#1\endcsname\quad
+  \fi}
+\makeatother
+\hypersetup{pdfstartview={XYZ null null 1.25}}
+\begin{document}
+
+\begin{center}
+\section{2D Polyelectrolyte Gel Discretization}
+$\textbf{Bindi}$ $\textbf{Nagda}$
+\end{center}
+
+\date{}
+\begin{flushleft}
+\section{Dissolved Ions}
+
+We would like to discretize the following equation:
+\begin{align}
+\bigskip \quad \partial_tC_i + \nabla \cdot  (\vec{u}_s C_l) = \dfrac{1}{\theta_s}\bigg[\nabla \cdot (D_l\theta_s(\nabla C_l + z_l C_l \nabla \Phi))\bigg] + f_l 
+\end{align}
+
+Note that $l$= H, B, Na, C, Ca. Also, we are going to use $\nabla \Phi = \begin{pmatrix} \phi \\ \varphi \end{pmatrix}$ \medskip
+
+Since we have already corrected any ionic imbalances that the volume fraction advection step may have created (I still have to type up this part), we can take a time step of the electrodiffusive equations. Therefore, there is no need to explicitly calculate the advective terms when we form the discrete form of the equation above. 
+
+\section{2D discretization}
+
+Here $i,j$ denote the location in the x and y-direction respectively. 
+
+\bigskip $\dfrac{C^{k+1}_{i,j}-C^*_{i,j}}{\Delta t} =  \dfrac{D_l}{h^2 \theta_{i,j}}\bigg[ \overline{\theta}^{k+1}_{i+\frac{1}{2},j}(C^{k+1}_{i+1,j}-C^{k+1}_{i,j}) -  \overline{\theta}^{k+1}_{i-\frac{1}{2},j}(C^{k+1}_{i,j}-C^{k+1}_{i-1,j})\bigg] + \medskip$ 
+
+$\hspace{2.5cm} \dfrac{D_l}{h^2 \theta_{i,j}}\bigg[ \overline{\theta}^{k+1}_{i,j+\frac{1}{2}}(C^{k+1}_{i,j+1}-C^{k+1}_{i,j}) -  \overline{\theta}^{k+1}_{i,j-\frac{1}{2}}(C^{k+1}_{i,j}-C^{k+1}_{i,j-1})\bigg] + \medskip  $
+
+$\hspace{2.6cm}  \dfrac{D_l z_l}{\theta_{i,j} h}\bigg[ \overline{\theta}^{k+1}_{i+\frac{1}{2},j}\dfrac{(\widetilde C^{k+1}_{i+1,j}+\widetilde C^{k+1}_{i,j})}{2}\phi_{i+\frac{1}{2},j} -   \overline{\theta}^{k+1}_{i-\frac{1}{2},j}\dfrac{(\widetilde C^{k+1}_{i,j}+\widetilde C^{k+1}_{i-1,j})}{2}\phi_{i-\frac{1}{2},j}\bigg] +$
+
+\begin{equation}
+\hspace{0.40cm}\dfrac{D_l z_l}{ \theta_{i,j} h}\bigg[ \overline{\theta}^{k+1}_{i,j+\frac{1}{2}}\dfrac{(\widetilde C^{k+1}_{i,j+1}+\widetilde C^{k+1}_{i,j})}{2}\varphi_{i,j+\frac{1}{2}} -   \overline{\theta}^{k+1}_{i,j-\frac{1}{2}}\dfrac{(\widetilde C^{k+1}_{i,j}+\widetilde C^{k+1}_{i,j-1})}{2}\varphi_{i,j-\frac{1}{2}}\bigg] + f_l \label{eq:disc1}
+\end{equation}
+
+\bigskip If $l$ is for Hydrogen then: 
+\begin{equation}
+f_H = -k_H^{On} (\tilde z \theta_{n_{i,j}}^{k+1} - B_{H_{i,j}}^{k+1} -  B_{Na_{i,j}}^{k+1} - B_{Ca_{i,j}}^{k+1} -2B_{C2_{i,j}}^{k+1}) + k_H^{off}\theta^{k+1}_{s_{i,j}} B^{k+1}_{H_{i,j}} - k(C^{k+1}_{H_{i,j}}\widetilde C^{k+1}_{B_{i,j}})
+\label{eq: fhy}
+\end{equation}
+
+\bigskip In order to make equation \ref{eq:disc1} look similar to the discretized equations in the 1D polyelectrolyte gel notes, I am going to expand out the first two lines of equation \ref{eq:disc1} by using the definition of $\overline\theta$ and then grouping the volume fractions together as coefficients of the concentration. Therefore, I get: 
+
+\bigskip $\dfrac{C^{k+1}_{i,j}-C^*_{i,j}}{\Delta t} = \dfrac{D_l}{h^2 \theta_{i,j}}\bigg[\Big(\dfrac{\theta^{k+1}_{i,j}+ \theta^{k+1}_{i-1,j}}{2}\Big)C^{k+1}_{i-1,j} - \Big(\dfrac{\theta^{k+1}_{i+1,j}+ 2\theta^{k+1}_{i,j}+ \theta^{k+1}_{i-1,j}}{2}\Big)C^{k+1}_{i,j} + \Big(\dfrac{\theta^{k+1}_{i+1,j}+ \theta^{k+1}_{i,j}}{2}\Big)C^{k+1}_{i+1,j}\bigg]+ \medskip$
+
+$\dfrac{D_l}{h^2 \theta_{i,j}}\bigg[\Big(\dfrac{\theta^{k+1}_{i,j}+ \theta^{k+1}_{i,j-1}}{2}\Big)C^{k+1}_{i,j-1} - \Big(\dfrac{\theta^{k+1}_{i,j+1}+ 2\theta^{k+1}_{i,j}+ \theta^{k+1}_{i,j-1}}{2}\Big)C^{k+1}_{i,j} + \Big(\dfrac{\theta^{k+1}_{i,j+1}+ \theta^{k+1}_{i,j}}{2}\Big)C^{k+1}_{i,j+1}\bigg]+ \medskip$
+
+$\hspace{0.2cm} \dfrac{D_l z_l}{\theta_{i,j} h}\bigg[\Big(\dfrac{\theta^{k+1}_{i+1,j}+ \theta^{k+1}_{i,j}}{2}\Big)\Big(\dfrac{\widetilde C^{k+1}_{i+1,j}+\widetilde C^{k+1}_{i,j}}{2}\Big)\phi_{i+\frac{1}{2},j} - \Big(\dfrac{\theta^{k+1}_{i,j}+ \theta^{k+1}_{i-1,j}}{2}\Big)\Big(\dfrac{\widetilde C^{k+1}_{i,j}+\widetilde C^{k+1}_{i-1,j}}{2}\Big)\phi_{i-\frac{1}{2},j}\bigg] +$
+
+\begin{equation}
+\dfrac{D_l z_l}{\theta_{i,j} h}\bigg[\Big(\dfrac{\theta^{k+1}_{i,j+1}+ \theta^{k+1}_{i,j}}{2}\Big)\Big(\dfrac{\widetilde C^{k+1}_{i,j+1}+\widetilde C^{k+1}_{i,j}}{2}\Big)\varphi_{i,j+\frac{1}{2}} - \Big(\dfrac{\theta^{k+1}_{i,j}+ \theta^{k+1}_{i,j-1}}{2}\Big)\Big(\dfrac{\widetilde C^{k+1}_{i,j}+\widetilde C^{k+1}_{i,j-1}}{2}\Big)\varphi_{i,j-\frac{1}{2}}\bigg] + f_l
+ \label{eq:disc2}
+\end{equation}
+
+\begin{landscape}
+
+By observing \ref{eq:disc2} we can define the following linear operators:
+
+\bigskip $\mathcal{L}^l_{i}=\dfrac{D_l}{h^2} \times$
+
+\begin{equation}
+\label{eq:oper1}
+{\fontsize{0.20cm}{0.1em}  {\begin{bmatrix}
+-\dfrac{\theta_{i+1,1}+2\theta_{i,1}+\theta_{i-1,1}}{2\theta_{i,1}}-\dfrac{\theta_{i,2}+2\theta_{i,1}}{2\theta_{i,1}} & \dfrac{\theta_{i,2}+\theta_{i,1}}{2\theta_{i,1}}& 0 & \cdots & 0\\
+\dfrac{\theta_{i,2}+\theta_{i,1}}{2\theta_{i,2}}  & -\dfrac{\theta_{i+1,2}+2\theta_{i,2}+\theta_{i-1,2}}{2\theta_{i,2}} -\dfrac{\theta_{i,3}+2\theta_{i,2}+\theta_{i,1}}{2\theta_{i,2}} & \dfrac{\theta_{i,3}+\theta_{i,2}}{2\theta_{i,2}}  & \ddots & 0\\
+0 & \ddots & \ddots & \ddots & 0\\
+\vdots & \ddots & \dfrac{\theta_{i,J-1}+\theta_{i,J-2}}{2\theta_{i,J-1}}  & -\dfrac{\theta_{{i+1,}_{J-1}}+2\theta_{{i,}_{J-1}}+\theta_{{i-1,}_{J-1}}}{2\theta_{i,J-1}}-\dfrac{\theta_{{i,}_{J}}+2\theta_{i,J-1}+\theta_{{i,}_{J-2}}}{2\theta_{{i,}_{J-1}}}  & \dfrac{\theta_{i,J+1}+\theta_{i,J-1}}{2\theta_{i,J-1}}\\
+0 & \cdots & 0 & \dfrac{\theta_{i,J}+\theta_{i,J-1}}{2\theta_{i,J}}  & -\dfrac{\theta_{{i+1,}_{J}}+2\theta_{{i,}_{J}}+\theta_{{i-1,}_{J}}}{2\theta_{i,J}}-\dfrac{2\theta_{i,J}+\theta_{{i,}_{J-1}}}{2\theta_{i,J}}\\
+\end{bmatrix}}}
+\end{equation}
+
+\bigskip In order to write matrix \ref{eq:oper1} in a more compact form, let us denote the terms along the diagonal as follows:
+
+$$  -\dfrac{\theta_{i+1,1}+2\theta_{i,1}+\theta_{i-1,1}}{2\theta_{i,1}}-\dfrac{\theta_{i,2}+2\theta_{i,1}}{2\theta_{i,1}} = -M_1 - N_1 $$
+
+$$\vdots$$
+$$\vdots $$  
+
+$$  -\dfrac{\theta_{i+1,J}+2\theta_{i,J}+\theta_{i-1,J}}{2\theta_{i,J}}-\dfrac{\theta_{{i,}_{J+1}}+2\theta_{i,J}+\theta_{{i,}_{J-1}}}{2\theta_{i,J}} = -M_J - N_J $$
+
+\end{landscape}
+
+Therefore, this linear operator can be written as:
+
+\begin{equation}
+\mathcal{L}^l_{i}=\dfrac{D_l}{h^2} \times
+\label{eq:oper2}
+{\fontsize{0.3cm}{0.1em}  {\begin{bmatrix}
+-M_1-N_1 & \dfrac{\theta_{i,2}+\theta_{i,1}}{2\theta_{i,1}}& 0 & \cdots & 0\\
+\dfrac{\theta_{i,2}+\theta_{i,1}}{2\theta_{i,2}}  & -M_2-N_2 & \dfrac{\theta_{i,3}+\theta_{i,2}}{2\theta_{i,2}}  & \ddots & 0\\
+0 & \ddots & \ddots & \ddots & 0\\
+\vdots & \ddots & \dfrac{\theta_{i,J-1}+\theta_{i,J-2}}{2\theta_{i,J-1}}  & -M_{J-1}-N_{J-1}  & \dfrac{\theta_{i,J+1}+\theta_{i,J-1}}{2\theta_{i,J-1}}\\
+0 & \cdots & 0 & \dfrac{\theta_{i,J}+\theta_{i,J-1}}{2\theta_{i,J}}  & -M_J-N_J \\
+\end{bmatrix}}}
+\end{equation}
+
+\bigskip The above operator is of size $J \times J$. This operator acts on the vector:
+
+$$\mathbf{\mathcal{C}}^l_{J \times 1} = \begin{bmatrix}
+ C^l_{i,1} \\ C^l_{i,2} \\ \vdots \\ C^l_{i,J} \\
+\end{bmatrix}$$
+
+\bigskip Now define the following diagonal operators:
+
+\begin{equation}
+\label{eq:diag_i-1}
+\mathcal{D} \ominus^l_{i}=\dfrac{D_l}{h^2}
+\begin{bmatrix}
+\dfrac{\theta_{i,1}+\theta_{i-1,1}}{2\theta_{i,1}} & 0 & \cdots & \cdots & 0 \\
+0 & \dfrac{\theta_{i,2}+\theta_{i-1,2}}{2\theta_{i,2}} & \ddots & \cdots & \vdots \\
+\vdots & \ddots & \ddots & \ddots &  \vdots   \\
+\vdots & \ddots & \ddots & \dfrac{\theta_{i,J-1}+\theta_{i-1,J-1}}{2\theta_{i,J-1}} &  0  \\
+0& \cdots & \cdots & 0 &    \dfrac{\theta_{i,J}+\theta_{i-1,J}}{2\theta_{i,J}}\\
+\end{bmatrix}
+\end{equation}
+
+\begin{equation}
+\label{eq:diag_i+1}
+\mathcal{D}\oplus^l_{i}=\dfrac{D_l}{h^2}
+\begin{bmatrix}
+\dfrac{\theta_{i,1}+\theta_{i+1,1}}{2\theta_{i,1}} & 0 & \cdots & \cdots & 0 \\
+0 & \dfrac{\theta_{i,2}+\theta_{i+1,2}}{2\theta_{i,2}} & \ddots & \cdots & \vdots \\
+\vdots & \ddots & \ddots & \ddots &  \vdots   \\
+\vdots & \ddots & \ddots & \dfrac{\theta_{i,J-1}+\theta_{i+1,J-1}}{2\theta_{i,J-1}} &  0   \\
+0& \cdots & \cdots & 0 &    \dfrac{\theta_{i,J}+\theta_{i+1,J}}{2\theta_{i,J}}\\
+\end{bmatrix}
+\end{equation}
+
+\bigskip Finally, we can define the operator:
+
+\begin{equation}
+\label{eq:operA}
+\mathcal{A}^l=\dfrac{D_l}{h^2}
+\begin{bmatrix}
+\mathcal{L}^l_1 & \mathcal{D}\oplus^l_1 & \cdots & \cdots & 0 \\
+\mathcal{D}\ominus^l_2 & \mathcal{L}^l_2 & \mathcal{D}\oplus^l_{2} & \cdots & \vdots \\
+\vdots & \ddots & \ddots & \ddots &  \vdots   \\
+\vdots & \ddots & \mathcal{D}\ominus^l_{I-1} & \mathcal{L}_{I-1}    &  \mathcal{D}\oplus^l_{I-1}    \\
+0& \cdots & \cdots & \mathcal{D}\ominus^l_I &    \mathcal{L}^l_I \\
+\end{bmatrix}
+\end{equation}
+
+\bigskip Operator \ref{eq:operA} acts on the vector:
+
+$$\mathbf{\mathcal{C}}^l_{(IJ) \times 1} = \begin{bmatrix}
+ C^l_{1,1} \\ C^l_{1,2} \\ \vdots \\ C^l_{1,J} \\ C^l_{2,1} \\ C^l_{2,2} \\ \vdots \\ C^l_{2,J} \\ \vdots \\ C^l_{I,1} \\ C^l_{I,2} \\ \vdots \\ C^l_{I,J}\\
+\end{bmatrix}$$
+
+\bigskip
+
+\bigskip
+$\mathcal{D}^l_{I \times I}=\dfrac{D_l z_l}{h} \times$
+\begin{equation}
+\label{eq:oper2}
+{\fontsize{0.22cm}{0.20em} {\begin{bmatrix}
+\Big(\dfrac{\theta_{2,j}+\theta_{1,j}}{2\theta_{1,j}}\Big) \Big(\dfrac{ \widetilde C_{2,j}+\widetilde C_{1,j}}{2}\Big)  &  0 & \cdots & 0\\
+-\Big(\dfrac{\theta_{2,j}+\theta_{1,j}}{2\theta_{2,j}}\Big) \Big(\dfrac{ \widetilde C_{2,j}+\widetilde C_{1,j}}{2}\Big)   & \Big(\dfrac{\theta_{3,j}+\theta_{2,j}}{2\theta_{2,j}}\Big) \Big(\dfrac{ \widetilde C_{3,j}+\widetilde C_{2,j}}{2}\Big)   & 0  & \vdots \\
+0 & \ddots & \ddots & \vdots \\
+\vdots & \ddots & -\Big(\dfrac{\theta_{I-1,j}+\theta_{I-2,j}}{2\theta_{I-1,j}}\Big) \Big(\dfrac{ \widetilde C_{I-1,j}+\widetilde C_{I-2,j}}{2}\Big)  & \Big(\dfrac{\theta_{I,j}+\theta_{I-1,j}}{2\theta_{I-1,j}}\Big) \Big(\dfrac{ \widetilde C_{I,j}+\widetilde C_{I-1,j}}{2}\Big)  \\
+0 & \cdots & 0 & -\Big(\dfrac{\theta_{I,j}+\theta_{I-1,j}}{2\theta_{I,j}}\Big) \Big(\dfrac{ \widetilde C_{I,j}+\widetilde C_{I-1,j}}{2}\Big) \\
+\end{bmatrix}}}
+\end{equation}
+
+This operator acts on the vector: $ \mathbf{\phi}= \begin{bmatrix} \phi_{\frac{3}{2},j} & \phi_{\frac{5}{2},j} & \cdots & \phi_{I-\frac{1}{2},j}\\ \end{bmatrix}^T$ 
+
+\bigskip
+
+\bigskip
+$\mathcal{E}^l_{I \times I}=\dfrac{D_l z_l}{h} \times$
+\begin{equation}
+\label{eq:oper3}
+{\fontsize{0.22cm}{0.20em} {\begin{bmatrix}
+\Big(\dfrac{\theta_{i,2}+\theta_{i,1}}{2\theta_{i,1}}\Big) \Big(\dfrac{ \widetilde C_{i,2}+\widetilde C_{i,1}}{2}\Big)  &  0 & \cdots & 0\\
+-\Big(\dfrac{\theta_{i,2}+\theta_{i,1}}{2\theta_{i,2}}\Big) \Big(\dfrac{ \widetilde C_{i,2}+\widetilde C_{i,1}}{2}\Big)   & \Big(\dfrac{\theta_{i,3}+\theta_{i,2}}{2\theta_{i,2}}\Big) \Big(\dfrac{ \widetilde C_{i,3}+\widetilde C_{i,2}}{2}\Big)   & 0  & \vdots \\
+0 & \ddots & \ddots & \vdots \\
+\vdots & \ddots & -\Big(\dfrac{\theta_{i,J-1}+\theta_{i,J-2}}{2\theta_{i,J-1}}\Big) \Big(\dfrac{ \widetilde C_{i,J-1}+\widetilde C_{i,J-2}}{2}\Big)  & \Big(\dfrac{\theta_{i,J}+\theta_{i,J-1}}{2\theta_{i,J-1}}\Big) \Big(\dfrac{ \widetilde C_{i,J}+\widetilde C_{i,J-1}}{2}\Big)  \\
+0 & \cdots & 0 & -\Big(\dfrac{\theta_{i,J}+\theta_{i,J-1}}{2\theta_{i,J}}\Big) \Big(\dfrac{ \widetilde C_{i,J}+\widetilde C_{i,J-1}}{2}\Big) \\
+\end{bmatrix}}}
+\end{equation}
+
+This operator acts on the vector: $ \mathbf{\varphi}= \begin{bmatrix} \varphi_{i,\frac{3}{2}} & \varphi_{i,\frac{5}{2}} & \cdots & \varphi_{i, J-\frac{1}{2}}\\ \end{bmatrix}^T$ 
+
+\section{Some New Notation}
+For convenience, we will define some new notation. We will denote the Hadamard product between two matrices as:
+
+$$A \bigotimes B$$
+
+The operator $\bigotimes$ refers to the element-wise multiplication of two matrices. For example, the matrix multiplaction in the last term of equation \ref{eq: fhy} can be performed as follows:
+
+\begin{equation}
+\begin{bmatrix}
+C_{H_{11}} & C_{H_{12}}   & C_{H_{13}}  & \cdots & C_{H_{1n}}  \\ 
+C_{H_{21}} & C_{H_{22}}   & C_{H_{23}}  & \cdots & C_{H_{2n}}  \\ 
+\vdots 		 & \vdots  &\vdots  & \ddots  & \vdots \\ 
+C_{H_{n1}} & C_{H_{n2}}   & C_{H_{n3}}  & \cdots & C_{H_{nn}}  \\ 
+\end{bmatrix}
+\bigotimes
+\begin{bmatrix}
+\widetilde C_{B_{11}} & \widetilde C_{B_{12}}   & \widetilde C_{B_{13}}  & \cdots & \widetilde C_{B_{1n}}  \\ 
+\widetilde C_{B_{21}} & \widetilde C_{B_{22}}   & \widetilde C_{B_{23}}  & \cdots & \widetilde C_{B_{2n}}  \\ 
+\vdots 		 & \vdots  &\vdots  & \ddots  & \vdots \\ 
+\widetilde C_{B_{n1}} & \widetilde C_{B_{n2}}   & \widetilde C_{B_{n3}}  & \cdots & \widetilde C_{B_{nn}}  \\ 
+\end{bmatrix}
+\end{equation}
+
+\begin{comment}
+%\begin{center}This is centered.\end{center}.\\
+
+This will produce \textsc{small caps} text.\\
+
+This will produce \textbf{bold and big} text.\\
+
+This will produce \begin{huge} really huge \end{huge} text.\\
+
+This will generate \begin{tiny} quite small \end{tiny} print.\\
+
+\begin{figure}[h]
+\centering
+\includegraphics[scale=.4]{strang_0556.jpg}
+\caption{Strang Splitting at time  = 0.56 seconds}
+\end{figure}
+
+$$
+ax^2 + bx + c
+$$
+
+$ax^2 + bx + c$ is a typical 2nd degree equation. It can be solved using the quadratic formula given below:\\
+
+$$
+x = \frac{-b \pm \sqrt{b^2-4ac}}{2a}
+$$
+
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{definition}[theorem]{Definition}
+\renewcommand{\qed}{\hfill $\blacksquare$}
+
+\begin{definition}
+\label{Stokes}
+  This is a definition.
+\end{definition}
+
+\begin{theorem}
+\emph{(Lagrange's Theorem)}
+\label{Lagrange}
+Let $G$ be a finite group, and let $H$ be a subgroup
+of $G$.  Then the order of $H$ divides the order of $G$.
+\end{theorem}
+
+\section{Sets}
+
+\begin{lemma}
+\label{SizeOfLeftCoset}
+Let $H$ be a finite subgroup of a group $G$.  Then each left
+coset of $H$ in $G$ has the same number of elements as $H$. 
+\end{lemma}
+
+\begin{proof}
+Let $H = \{ h_1, h_2,\ldots, h_m\}$, where
+$h_1, h_2,\ldots, h_m$ are distinct, and let $x$ be an
+element of $G$.  Then the left coset $xH$ consists of
+the elements $x h_j$ for $j = 1,2,\ldots,m$.
+Suppose that $j$ and $k$ are integers between
+$1$ and $m$ for which $x h_j = x h_k$.  Then
+$h_j = x^{-1} (x h_j) = x^{-1} (x h_k) = h_k$,
+and thus $j = k$, since $h_1, h_2,\ldots, h_m$
+are distinct.  It follows that the elements
+$x h_1, x h_2,\ldots, x h_m$ are distinct.
+We conclude that the subgroup~$H$ and the left
+coset $xH$ both have $m$ elements,
+as required.
+\end{proof}
+
+By the Theorem ~\ref{Lagrange} and Definition ~\ref{Stokes} we can see that.
+
+\section{Properties of Integrals}
+
+\begin{theorem}
+\emph{(Fundamental Theorem of Calculus)}
+\label{FunThmCacl}
+The Fundamental Theorem of Calculus has two parts. The first part state, roughly, that the derivative of the integral is the original function.
+\end{theorem}
+\end{comment}
+
+\end{flushleft}
+\end{document}

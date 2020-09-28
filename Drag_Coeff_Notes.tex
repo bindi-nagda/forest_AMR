@@ -1,0 +1,147 @@
+\documentclass[11pt,a4paper]{article}
+\renewcommand{\baselinestretch}{1}
+\usepackage[utf8]{inputenc}
+\usepackage{amsmath}
+\usepackage{comment}
+\usepackage{amsfonts}
+\usepackage{latexsym,amssymb}
+\usepackage{authblk}
+\usepackage{graphicx}
+\usepackage{hyperref}
+\usepackage{amsthm}
+\usepackage{ragged2e} % to justify text
+\usepackage[margin=0.80in]{geometry}
+\usepackage{xparse,mathtools}
+\usepackage{lscape}
+\newcommand*\conj[1]{\bar{#1}}
+\newcommand*\mean[1]{\bar{#1}}
+\makeatletter
+\def\@seccntformat#1{\expandafter\ifx\csname c@#1\endcsname\c@section\else
+  \csname the#1\endcsname\quad
+  \fi}
+\makeatother
+\hypersetup{pdfstartview={XYZ null null 1.25}}
+
+\begin{document}
+
+
+\begin{center}
+\section{Solvent - Network Drag Coefficient ($\xi$)}
+Bindi Nagda
+
+\medskip 
+June 21, 2020
+\end{center}
+
+\begin{flushleft}
+\begin{justify}
+As per our discussion, we have currently observed that the drag force is approximately $10^6$ times larger than viscous forces. Therefore, I looked at some literature on physical properties of polymer networks to see if the value of 4.2821 g $\mu m^{-3}s^{-1}$ that we are using is suitable.
+
+\bigskip
+\end{justify}
+
+According to Tokita [ref 1], the drag coefficient is proportional to the shear viscosity of the solvent, $\nu_s$, and is inversely proportional to the square of the cross-section of the pores in the polymer, $\alpha$. 
+
+
+$$\xi \propto \frac{\nu_s}{\alpha^2}$$
+
+\begin{justify}
+The pore size of mucus gels $\textit{in vivo}$ are around 100-200 nm (or 0.1-0.2$\mu m$) according to [ref 2]. Since our solvent shear viscosity, $\nu_s$, is 0.01 Poise, then $$ \xi \propto \dfrac{10^{-6} g \hspace{0.1cm} \mu m^{-1}s^{-1}}{(10^{-1}\mu m)^2} \implies \xi \approx 10^{-4}g \hspace{0.1cm} \mu m^{-3}s^{-1} $$ Thus, the order of magnitude of $\xi$ is now closer to that of the solvent and network viscosities. This is in line with both theoretical considerations and observations from [ref 3] on pages 206-208. Note that [ref 3] uses the same momentum equations and incompressibilty conditions that we do. Furthermore, according to Figure 10 in [ref 1], the drag coefficient of a typical polymer network$^*$ varies from $10^{-6}$ to $10^{-1} g$ $\mu m^{-3}s^{-1}$.  A range is given because the drag coefficient decreases when cross-link concentration of polymer network is increased, which may occur due to events such gel swelling whereby there is an increase in monovalent crosslink bonds due to ion exchange. Therefore, we may want to consider situations like gel swelling and shrinking in order to determine an appropriate value for drag coefficient. 
+
+\medskip 
+$^*$  The polymer network used by Tokita has a shear viscosity of between 1-100 Poise (depending on shear rate applied) and the solvent used is water which has a shear viscosity of 0.009 Poise.
+
+\end{justify}
+
+\section{References}
+
+[1] Tokita, M. Transport Phenomena in Gel. \textit{Gels} \textbf{2016}, 2, 17. 
+\bigskip
+
+[2] Pearson, J., Wilcox, M. The properties of the mucus barrier, a unique gel - how can nanoparticles cross it? \textit{Therapeutic Delivery}, \textbf{2016}, 7, 781-788 
+
+\bigskip
+
+[3] Kamm RD, Mofrad MRK. Cytoskeletal Mechanics: Models and Measurements in Cell Mechanics. \textit{Cambridge University Press}, \textbf{2006}, 206-208 \href{http://search.ebscohost.com.portal.lib.fit.edu/login.aspx?direct=true&db=e000xna&AN=174455&site=ehost-live}{Link to Full Text Online}
+
+\begin{comment}
+%\begin{center}This is centered.\end{center}.\\
+
+This will produce \textsc{small caps} text.\\
+
+This will produce \textbf{bold and big} text.\\
+
+This will produce \begin{huge} really huge \end{huge} text.\\
+
+This will generate \begin{tiny} quite small \end{tiny} print.\\
+
+\begin{figure}[h]
+\centering
+\includegraphics[scale=.4]{strang_0556.jpg}
+\caption{Strang Splitting at time  = 0.56 seconds}
+\end{figure}
+
+$$
+ax^2 + bx + c
+$$
+
+$ax^2 + bx + c$ is a typical 2nd degree equation. It can be solved using the quadratic formula given below:\\
+
+$$
+x = \frac{-b \pm \sqrt{b^2-4ac}}{2a}
+$$
+
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{definition}[theorem]{Definition}
+\renewcommand{\qed}{\hfill $\blacksquare$}
+
+\begin{definition}
+\label{Stokes}
+  This is a definition.
+\end{definition}
+
+\begin{theorem}
+\emph{(Lagrange's Theorem)}
+\label{Lagrange}
+Let $G$ be a finite group, and let $H$ be a subgroup
+of $G$.  Then the order of $H$ divides the order of $G$.
+\end{theorem}
+
+\section{Sets}
+
+\begin{lemma}
+\label{SizeOfLeftCoset}
+Let $H$ be a finite subgroup of a group $G$.  Then each left
+coset of $H$ in $G$ has the same number of elements as $H$. 
+\end{lemma}
+
+\begin{proof}
+Let $H = \{ h_1, h_2,\ldots, h_m\}$, where
+$h_1, h_2,\ldots, h_m$ are distinct, and let $x$ be an
+element of $G$.  Then the left coset $xH$ consists of
+the elements $x h_j$ for $j = 1,2,\ldots,m$.
+Suppose that $j$ and $k$ are integers between
+$1$ and $m$ for which $x h_j = x h_k$.  Then
+$h_j = x^{-1} (x h_j) = x^{-1} (x h_k) = h_k$,
+and thus $j = k$, since $h_1, h_2,\ldots, h_m$
+are distinct.  It follows that the elements
+$x h_1, x h_2,\ldots, x h_m$ are distinct.
+We conclude that the subgroup~$H$ and the left
+coset $xH$ both have $m$ elements,
+as required.
+\end{proof}
+
+By the Theorem ~\ref{Lagrange} and Definition ~\ref{Stokes} we can see that.
+
+\section{Properties of Integrals}
+
+\begin{theorem}
+\emph{(Fundamental Theorem of Calculus)}
+\label{FunThmCacl}
+The Fundamental Theorem of Calculus has two parts. The first part state, roughly, that the derivative of the integral is the original function.
+\end{theorem}
+\end{comment}
+
+\end{flushleft}
+\end{document}
